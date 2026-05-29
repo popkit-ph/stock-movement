@@ -1,0 +1,15 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Data (large generated/source files)
+data/processed/*.json
+data/raw/*.xlsx
+
+# OS
+.DS_Store

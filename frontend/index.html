@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stock Movement - JLC GROUP 2026</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, 'Segoe UI', 'Sarabun', Tahoma, sans-serif; background: #f4f5f7; color: #1f2937; }
+.app { max-width: 1400px; margin: 0 auto; padding: 20px; }
+.sticky-top { position: sticky; top: 0; z-index: 50; background: #f4f5f7; padding: 12px 8px 6px 8px; margin: -12px -8px 12px -8px; transition: box-shadow 0.2s; }
+.sticky-top.scrolled { box-shadow: 0 6px 18px rgba(0,0,0,0.08); }
+header { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: white; padding: 18px 24px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: padding 0.2s; }
+header h1 { font-size: 20px; margin-bottom: 4px; transition: font-size 0.2s; }
+header .sub { font-size: 12px; opacity: 0.9; }
+.sticky-top.scrolled header { padding: 6px 16px; margin-bottom: 6px; }
+.sticky-top.scrolled header h1 { font-size: 14px; margin-bottom: 0; }
+.sticky-top.scrolled header .sub { display: none; }
+.sticky-top.scrolled .kpis { gap: 8px; margin-bottom: 6px; }
+.sticky-top.scrolled .kpi { padding: 8px 12px; border-radius: 8px; }
+.sticky-top.scrolled .kpi .label { font-size: 10px; margin-bottom: 0; }
+.sticky-top.scrolled .kpi .value { font-size: 15px; }
+.sticky-top.scrolled .toolbar { padding: 8px 14px; margin-bottom: 6px; }
+.sticky-top.scrolled .toolbar input[type=text], .sticky-top.scrolled .toolbar select { padding: 6px 10px; font-size: 13px; }
+.toolbar { background: white; padding: 14px 18px; border-radius: 12px; margin-bottom: 12px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.toolbar input[type=text] { flex: 1; min-width: 240px; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.toolbar input[type=text]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+.toolbar select { padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 8px; background: white; font-size: 14px; font-family: inherit; cursor: pointer; }
+.date-range { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f3f4f6; border-radius: 8px; }
+.date-range.active { background: #dbeafe; box-shadow: 0 0 0 2px #3b82f6 inset; }
+.date-range .dr-lbl { font-size: 12px; color: #6b7280; font-weight: 600; }
+.date-range input[type=date] { padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; background: white; }
+.date-range .dr-clear { background: white; border: 1px solid #d1d5db; border-radius: 6px; width: 26px; height: 26px; cursor: pointer; color: #6b7280; font-size: 13px; padding: 0; line-height: 1; }
+.date-range .dr-clear:hover { background: #f9fafb; color: #dc2626; border-color: #dc2626; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.kpi { background: white; padding: 16px 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: padding 0.2s; }
+.kpi .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; transition: font-size 0.2s; }
+.kpi .value { font-size: 22px; font-weight: 700; color: #111827; transition: font-size 0.2s; }
+.kpi.in .value { color: #059669; }
+.kpi.out .value { color: #dc2626; }
+.kpi.bal .value { color: #2563eb; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+#ptable { border-collapse: separate; border-spacing: 0; }
+#ptable thead th { position: sticky; top: var(--sticky-h, 220px); z-index: 30; background: #f9fafb; box-shadow: inset 0 -1px 0 #e5e7eb, 0 2px 4px rgba(0,0,0,0.04); border-bottom: 0; }
+th { background: #f9fafb; padding: 12px 14px; text-align: left; font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e5e7eb; }
+th.th-sort { cursor: pointer; user-select: none; transition: background 0.15s; }
+th.th-sort:hover { background: #eef2ff; color: #1d4ed8; }
+th.th-sort.active { background: #dbeafe; color: #1d4ed8; }
+.th-arrow { display: inline-block; width: 12px; text-align: center; opacity: 0.6; margin-left: 2px; }
+th.th-sort.active .th-arrow { opacity: 1; }
+td { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+tr:hover { background: #f9fafb; cursor: pointer; }
+.code { font-family: 'SF Mono', Consolas, monospace; font-weight: 600; color: #1d4ed8; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.num.in { color: #059669; }
+.num.out { color: #dc2626; }
+.num.bal { font-weight: 600; }
+.num.neg { color: #dc2626; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.badge.FG { background: #dbeafe; color: #1e40af; }
+.badge.BTA { background: #fef3c7; color: #92400e; }
+.badge.PM { background: #d1fae5; color: #065f46; }
+.badge.BOX { background: #e9d5ff; color: #6b21a8; }
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; padding: 30px 20px; }
+.modal.show { display: flex; }
+.modal-content { background: white; border-radius: 12px; width: 100%; max-width: 1100px; max-height: calc(100vh - 60px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; flex-direction: column; overflow: hidden; }
+.modal-sticky { flex-shrink: 0; background: white; border-bottom: 1px solid #e5e7eb; box-shadow: 0 2px 6px rgba(0,0,0,0.04); border-radius: 12px 12px 0 0; }
+.modal-header { padding: 18px 24px 12px; display: flex; justify-content: space-between; align-items: flex-start; }
+.modal-header h2 { font-size: 18px; color: #111827; margin-bottom: 4px; }
+.modal-header .meta { font-size: 13px; color: #6b7280; }
+.close { background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; padding: 0 8px; }
+.close:hover { color: #111827; }
+.modal-body { flex: 1; overflow-y: auto; padding: 16px 24px 20px; }
+.modal-sticky .panel { padding: 0 24px 14px; }
+.month-filter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0; }
+.month-btn { padding: 6px 12px; border: 1px solid #d1d5db; background: white; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; }
+.month-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
+.month-btn:hover:not(.active) { background: #f3f4f6; }
+.tx-table { font-size: 13px; }
+.tx-table thead th { position: sticky; top: 0; background: #f9fafb; z-index: 5; }
+.tx-table th, .tx-table td { padding: 8px 12px; }
+.tx-row-movement { background: #fffbeb; }
+.tx-row-movement:hover { background: #fef3c7; }
+.empty { padding: 40px; text-align: center; color: #9ca3af; }
+.results-count { font-size: 13px; color: #6b7280; padding: 8px 4px; }
+.tx-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
+.tx-summary .box { background: #f9fafb; padding: 12px; border-radius: 8px; border-left: 3px solid #3b82f6; }
+.tx-summary .box .lbl { font-size: 11px; color: #6b7280; text-transform: uppercase; }
+.tx-summary .box .val { font-size: 18px; font-weight: 700; margin-top: 2px; }
+.tx-summary .box.in { border-color: #10b981; }
+.tx-summary .box.in .val { color: #059669; }
+.tx-summary .box.out { border-color: #ef4444; }
+.tx-summary .box.out .val { color: #dc2626; }
+.tx-summary .box.bal { border-color: #3b82f6; }
+.tx-summary .box.bal .val { color: #2563eb; }
+@media(max-width: 768px) {
+  .app { padding: 10px; }
+  table { font-size: 12px; }
+  th, td { padding: 8px 6px; }
+  .modal-content { max-width: 100%; }
+  .tx-summary { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="sticky-top" id="stickyTop">
+  <header>
+    <h1>📦 Stock Movement Dashboard - JLC GROUP 2026</h1>
+    <div class="sub">บริษัท เจแอลซี กรุ๊ป จำกัด · รายงานสินค้าและวัสดุคงเหลือ Online Stocks ประจำปี 2026</div>
+  </header>
+
+  <div class="kpis" id="kpis"></div>
+
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="🔍 ค้นหา รหัสสินค้า หรือ ชื่อสินค้า..." />
+    <select id="category">
+      <option value="">ทุกหมวด</option>
+      <option value="FG">สินค้าสำเร็จรูป (FG)</option>
+      <option value="BTA">Beauterry (BTA)</option>
+      <option value="PM">วัสดุ/ของแถม (PM)</option>
+      <option value="BOX">กล่อง (BOX)</option>
+    </select>
+    <select id="sort">
+      <option value="default">เรียงตามลำดับ</option>
+      <option value="code">เรียงตามรหัส</option>
+      <option value="closing_desc">คงเหลือมาก → น้อย</option>
+      <option value="closing_asc">คงเหลือน้อย → มาก</option>
+      <option value="in_desc">รับมาก → น้อย</option>
+      <option value="in_asc">รับน้อย → มาก</option>
+      <option value="out_desc">จ่ายมาก → น้อย</option>
+      <option value="out_asc">จ่ายน้อย → มาก</option>
+      <option value="negative_first">⚠️ คงเหลือติดลบก่อน</option>
+    </select>
+    <div class="date-range">
+      <span class="dr-lbl">ช่วงวันที่:</span>
+      <input type="date" id="dateFrom" />
+      <span>—</span>
+      <input type="date" id="dateTo" />
+      <button type="button" id="dateClear" class="dr-clear" title="ล้างช่วงวันที่">✕</button>
+    </div>
+  </div>
+  </div>
+
+  <div class="results-count" id="rcount"></div>
+  <table id="ptable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>หมวด</th>
+        <th>รหัสสินค้า</th>
+        <th>ชื่อสินค้า</th>
+        <th class="num">ยกมา</th>
+        <th class="num">รับ</th>
+        <th class="num th-sort" id="th-out" onclick="toggleOutSort()">จ่าย <span id="th-out-arrow" class="th-arrow"></span></th>
+        <th class="num">คงเหลือ</th>
+      </tr>
+    </thead>
+    <tbody id="ptbody"></tbody>
+  </table>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="modal-sticky">
+      <div class="modal-header">
+        <div>
+          <h2 id="m-title"></h2>
+          <div class="meta" id="m-meta"></div>
+        </div>
+        <button class="close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="panel">
+        <div class="tx-summary" id="m-summary"></div>
+        <div class="month-filter" id="m-months"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <table class="tx-table">
+        <thead>
+          <tr>
+            <th>วันที่</th>
+            <th>เลขที่</th>
+            <th class="num">รับ</th>
+            <th class="num">จ่าย</th>
+            <th class="num">คงเหลือ</th>
+            <th>หมายเหตุ</th>
+          </tr>
+        </thead>
+        <tbody id="m-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+let DB = { products: [] };
+const fmt = n => (n === 0 || n === null || n === undefined) ? '-' : Number(n).toLocaleString('en-US', {maximumFractionDigits: 2});
+const cls = n => n < 0 ? 'neg' : '';
+
+let filtered = DB.products.slice();
+let currentMonth = 'all';
+let currentProduct = null;
+let dateRange = { from: '', to: '' };
+
+function rangeActive() {
+  return !!(dateRange.from || dateRange.to);
+}
+
+function computeRangeStats(p) {
+  let inSum = 0, outSum = 0, openBal = p.opening, closeBal = p.opening, hasMv = false;
+  const from = dateRange.from, to = dateRange.to;
+  // opening = balance just before range starts
+  for (const t of p.tx) {
+    const d = t[0];
+    if (from && d < from) { openBal = t[3]; continue; }
+    if (to && d > to) break;
+    inSum += t[1] || 0;
+    outSum += t[2] || 0;
+    closeBal = t[3];
+    if ((t[1] || 0) !== 0 || (t[2] || 0) !== 0) hasMv = true;
+  }
+  return { in: inSum, out: outSum, opening: openBal, closing: closeBal, hasMovement: hasMv };
+}
+
+// Stats used by table/KPIs (range-aware)
+function pStats(p) {
+  if (rangeActive()) return p._range;
+  return { in: p.total_in, out: p.total_out, opening: p.opening, closing: p.closing, hasMovement: true };
+}
+
+function renderKPIs() {
+  const src = filtered;
+  const all = DB.products.length;
+  const total = src.length;
+  const totalIn = src.reduce((s, p) => s + (pStats(p).in || 0), 0);
+  const totalOut = src.reduce((s, p) => s + (pStats(p).out || 0), 0);
+  const totalBal = src.reduce((s, p) => s + (pStats(p).closing || 0), 0);
+  const lowStock = src.filter(p => pStats(p).closing <= 0).length;
+  const subLabel = total === all ? '' : ` <span style="font-size:11px;color:#6b7280;font-weight:400">/ ${all.toLocaleString()}</span>`;
+  const rangeTag = rangeActive()
+    ? ` <span style="font-size:10px;color:#1d4ed8;background:#dbeafe;padding:1px 6px;border-radius:4px;margin-left:4px">ในช่วง</span>`
+    : '';
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi"><div class="label">รวมรายการสินค้า${rangeTag}</div><div class="value">${total.toLocaleString()}${subLabel}</div></div>
+    <div class="kpi in"><div class="label">รวมรับเข้า (ชิ้น)${rangeTag}</div><div class="value">${fmt(totalIn)}</div></div>
+    <div class="kpi out"><div class="label">รวมจ่ายออก (ชิ้น)${rangeTag}</div><div class="value">${fmt(totalOut)}</div></div>
+    <div class="kpi bal"><div class="label">คงเหลือ${rangeActive() ? 'สิ้นช่วง' : 'รวม'} (ชิ้น)</div><div class="value">${fmt(totalBal)}</div></div>
+    <div class="kpi"><div class="label">⚠️ คงเหลือ ≤ 0</div><div class="value" style="color:#dc2626">${lowStock}</div></div>
+  `;
+}
+
+function renderTable() {
+  const tbody = document.getElementById('ptbody');
+  const active = rangeActive();
+  const rangeMsg = active ? ` · ช่วง ${dateRange.from || '...'} → ${dateRange.to || '...'}` : '';
+  document.getElementById('rcount').textContent = `แสดง ${filtered.length} รายการ จากทั้งหมด ${DB.products.length}${rangeMsg}`;
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">ไม่พบข้อมูล</td></tr>';
+    return;
+  }
+  tbody.innerHTML = filtered.map((p, i) => {
+    const s = pStats(p);
+    return `<tr onclick="openProduct(${DB.products.indexOf(p)})">
+      <td>${i + 1}</td>
+      <td><span class="badge ${p.category}">${p.category}</span></td>
+      <td class="code">${escapeHtml(p.code)}</td>
+      <td>${escapeHtml(p.name)}</td>
+      <td class="num">${fmt(s.opening)}</td>
+      <td class="num in">${fmt(s.in)}</td>
+      <td class="num out">${fmt(s.out)}</td>
+      <td class="num bal ${cls(s.closing)}">${fmt(s.closing)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const cat = document.getElementById('category').value;
+  const sort = document.getElementById('sort').value;
+  dateRange.from = document.getElementById('dateFrom').value;
+  dateRange.to = document.getElementById('dateTo').value;
+  document.querySelector('.date-range').classList.toggle('active', rangeActive());
+
+  // Pre-compute range stats once per product when active
+  if (rangeActive()) {
+    DB.products.forEach(p => { p._range = computeRangeStats(p); });
+  }
+
+  filtered = DB.products.filter(p => {
+    if (cat && p.category !== cat) return false;
+    if (q && !(p.code.toLowerCase().includes(q) || p.name.toLowerCase().includes(q))) return false;
+    if (rangeActive() && !p._range.hasMovement) return false;
+    return true;
+  });
+
+  const v = p => pStats(p);
+  if (sort === 'code') filtered.sort((a, b) => a.code.localeCompare(b.code));
+  else if (sort === 'closing_desc') filtered.sort((a, b) => (v(b).closing || 0) - (v(a).closing || 0));
+  else if (sort === 'closing_asc') filtered.sort((a, b) => (v(a).closing || 0) - (v(b).closing || 0));
+  else if (sort === 'in_desc') filtered.sort((a, b) => (v(b).in || 0) - (v(a).in || 0));
+  else if (sort === 'in_asc') filtered.sort((a, b) => (v(a).in || 0) - (v(b).in || 0));
+  else if (sort === 'out_desc') filtered.sort((a, b) => (v(b).out || 0) - (v(a).out || 0));
+  else if (sort === 'out_asc') filtered.sort((a, b) => (v(a).out || 0) - (v(b).out || 0));
+  else if (sort === 'negative_first') filtered.sort((a, b) => (v(a).closing || 0) - (v(b).closing || 0));
+
+  // Sync clickable "จ่าย" header visual with current sort
+  const th = document.getElementById('th-out');
+  const arrow = document.getElementById('th-out-arrow');
+  if (sort === 'out_desc') { th.classList.add('active'); arrow.textContent = '↓'; }
+  else if (sort === 'out_asc') { th.classList.add('active'); arrow.textContent = '↑'; }
+  else { th.classList.remove('active'); arrow.textContent = ''; }
+
+  renderKPIs();
+  renderTable();
+}
+
+function toggleOutSort() {
+  const sortSel = document.getElementById('sort');
+  // 1st click → desc, 2nd click → asc, 3rd click → back to default
+  if (sortSel.value === 'out_desc') sortSel.value = 'out_asc';
+  else if (sortSel.value === 'out_asc') sortSel.value = 'default';
+  else sortSel.value = 'out_desc';
+  applyFilters();
+}
+
+const MONTHS_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+function openProduct(idx) {
+  const p = DB.products[idx];
+  currentProduct = p;
+  currentMonth = 'all';
+  document.getElementById('m-title').textContent = p.code + ' · ' + p.name;
+  document.getElementById('m-meta').innerHTML = `<span class="badge ${p.category}">${p.category}</span> · Sheet: ${escapeHtml(p.sheet)} · ${p.tx.length} วัน`;
+
+  // Month filter buttons
+  const monthBtns = ['<button class="month-btn active" data-m="all" onclick="setMonth(\'all\')">ทั้งปี</button>'];
+  for (let m = 1; m <= 12; m++) {
+    monthBtns.push(`<button class="month-btn" data-m="${m}" onclick="setMonth('${m}')">${MONTHS_TH[m-1]}</button>`);
+  }
+  document.getElementById('m-months').innerHTML = monthBtns.join('');
+
+  renderSummary();
+  renderHistory();
+  document.getElementById('modal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function renderSummary() {
+  const p = currentProduct;
+  if (!p) return;
+  let opening, totalIn, totalOut, closing, lblOpen, lblIn, lblOut, lblClose;
+  if (currentMonth === 'all') {
+    opening = p.opening;
+    totalIn = p.total_in;
+    totalOut = p.total_out;
+    closing = p.closing;
+    lblOpen = 'ยอดยกมา (1 ม.ค.)';
+    lblIn = 'รับเข้าทั้งปี';
+    lblOut = 'จ่ายออกทั้งปี';
+    lblClose = 'คงเหลือ ณ ปัจจุบัน';
+  } else {
+    const mStr = String(currentMonth).padStart(2, '0');
+    const monthTx = p.tx.filter(t => t[0] && t[0].slice(5, 7) === mStr);
+    const prevTx = p.tx.filter(t => t[0] && t[0].slice(5, 7) < mStr);
+    // opening of month = balance at end of previous month, else original opening
+    opening = prevTx.length ? prevTx[prevTx.length - 1][3] : p.opening;
+    totalIn = monthTx.reduce((s, t) => s + (t[1] || 0), 0);
+    totalOut = monthTx.reduce((s, t) => s + (t[2] || 0), 0);
+    closing = monthTx.length ? monthTx[monthTx.length - 1][3] : opening;
+    const mName = MONTHS_TH[Number(currentMonth) - 1];
+    lblOpen = `ยอดยกมา (ต้น${mName})`;
+    lblIn = `รับเข้า ${mName}`;
+    lblOut = `จ่ายออก ${mName}`;
+    lblClose = `คงเหลือสิ้น${mName}`;
+  }
+  document.getElementById('m-summary').innerHTML = `
+    <div class="box"><div class="lbl">${lblOpen}</div><div class="val">${fmt(opening)}</div></div>
+    <div class="box in"><div class="lbl">${lblIn}</div><div class="val">${fmt(totalIn)}</div></div>
+    <div class="box out"><div class="lbl">${lblOut}</div><div class="val">${fmt(totalOut)}</div></div>
+    <div class="box bal"><div class="lbl">${lblClose}</div><div class="val ${cls(closing)}">${fmt(closing)}</div></div>
+  `;
+}
+
+function setMonth(m) {
+  currentMonth = m;
+  document.querySelectorAll('.month-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.m === String(m));
+  });
+  renderSummary();
+  renderHistory();
+}
+
+function renderHistory() {
+  const p = currentProduct;
+  if (!p) return;
+  const tbody = document.getElementById('m-tbody');
+  let txs = p.tx;
+  if (currentMonth !== 'all') {
+    const mStr = String(currentMonth).padStart(2, '0');
+    txs = txs.filter(t => t[0] && t[0].slice(5, 7) === mStr);
+  }
+  if (txs.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">ไม่มีข้อมูลในช่วงนี้</td></tr>';
+    return;
+  }
+  tbody.innerHTML = txs.map(t => {
+    // t = [date, in, out, balance, doc, note]
+    const movement = (t[1] || 0) !== 0 || (t[2] || 0) !== 0;
+    return `<tr class="${movement ? 'tx-row-movement' : ''}">
+      <td>${formatDate(t[0])}</td>
+      <td>${escapeHtml(t[4])}</td>
+      <td class="num in">${fmt(t[1])}</td>
+      <td class="num out">${fmt(t[2])}</td>
+      <td class="num bal ${cls(t[3])}">${fmt(t[3])}</td>
+      <td>${escapeHtml(t[5])}</td>
+    </tr>`;
+  }).join('');
+}
+
+function formatDate(iso) {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('category').addEventListener('change', applyFilters);
+document.getElementById('sort').addEventListener('change', applyFilters);
+document.getElementById('dateFrom').addEventListener('change', applyFilters);
+document.getElementById('dateTo').addEventListener('change', applyFilters);
+document.getElementById('dateClear').addEventListener('click', () => {
+  document.getElementById('dateFrom').value = '';
+  document.getElementById('dateTo').value = '';
+  applyFilters();
+});
+
+async function loadData() {
+  const tbody = document.getElementById('ptbody');
+  tbody.innerHTML = '<tr><td colspan="8" class="empty">กำลังโหลดข้อมูล...</td></tr>';
+  try {
+    const res = await fetch('/api/products');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    DB = await res.json();
+    filtered = DB.products.slice();
+    applyFilters();
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="8" class="empty">โหลดข้อมูลไม่สำเร็จ: ${escapeHtml(e.message)}</td></tr>`;
+  }
+}
+loadData();
+
+// Pin top bar (no shrink animation) + dynamic table header offset
+const stickyEl = document.getElementById('stickyTop');
+function syncStickyHeight() {
+  document.documentElement.style.setProperty('--sticky-h', stickyEl.offsetHeight + 'px');
+}
+window.addEventListener('resize', syncStickyHeight);
+syncStickyHeight();
+</script>
+</body>
+</html>

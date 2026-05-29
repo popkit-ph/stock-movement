@@ -1,0 +1,81 @@
+---
+title: Changelog
+created: 2026-05-29
+tags: [changelog]
+---
+
+# Changelog
+
+ทุก change สำคัญของแอป — รวบยอด เรียงจากใหม่ → เก่า
+
+รูปแบบ: [Keep a Changelog](https://keepachangelog.com/) + [SemVer](https://semver.org/)
+
+---
+
+## [Unreleased]
+
+(งานที่ยังไม่ release / ยังทดสอบอยู่)
+
+---
+
+## [0.2.0] — 2026-05-29
+
+### Added
+- **Date range filter** ในหน้าหลัก — เลือกช่วงวันที่เพื่อดู in/out/closing ของช่วงนั้น
+- **Sticky table header (`<thead>`)** — ตรึงหัวคอลัมน์ตอน scroll
+- **Header click sort** ที่คอลัมน์ "จ่าย" — คลิกครั้งแรก desc, คลิกอีกครั้ง asc, คลิกอีกครั้ง default
+- Sort options เพิ่ม: `รับเข้าน้อย→มาก`, `จ่ายน้อย→มาก`, `⚠️ คงเหลือติดลบก่อน`
+- Modal summary คำนวณ **dynamic ตามเดือนที่เลือก** (opening = balance ก่อนเดือนนี้, closing = balance สุดท้ายในเดือน)
+- KPI ด้านบน **dynamic ตาม filter** + แสดง `<count> / <total>` ถ้ามี filter
+- `docs/` (Obsidian vault) — เอกสารโครงสร้าง, work-log, changelog
+
+### Changed
+- **Top bar ตรึงตาย** — ลบ scroll shrink animation
+- Table `border-collapse: collapse` → `separate` (เพื่อให้ sticky `<th>` ทำงาน)
+- ใช้ `pStats(p)` wrapper สำหรับเลือก totals/range stats — ลด code duplication ใน render
+
+ดูรายละเอียดที่ [[work-log/2026-05-29-frontend-ux-improvements]]
+
+---
+
+## [0.1.0] — 2026-05-29
+
+### Added
+- **Full-stack restructure** จาก flat directory
+  - `config.py` ศูนย์กลาง config โหลด `.env`
+  - `server/app.py` Flask backend
+  - `scripts/` รวม ETL/audit
+  - `frontend/` รวม HTML
+  - `data/raw/` + `data/processed/`
+- `.env` + `.env.example` — DB credentials/server config
+- `.gitignore` — ignore secrets + generated data
+- `requirements.txt`
+- `README.md`
+- API endpoints
+  - `GET /` — frontend
+  - `GET /api/health` — DB connectivity
+  - `GET /api/products` — products + tx จาก PostgreSQL
+
+### Changed
+- Frontend อ่านข้อมูลผ่าน `fetch('/api/products')` แทน embed JSON
+- Scripts ทั้งหมดใช้ `import config` แทน hardcode DB credentials
+- `full_audit.py` อ่าน JSON compact แทน parse HTML
+- HTML ขนาด: 1.7 MB → 17 KB (ลบ embed JSON)
+
+### Removed
+- Hardcoded DB credentials ในไฟล์ Python
+- Embedded `<script id="data" type="application/json">` ใน HTML
+
+ดูรายละเอียดที่ [[work-log/2026-05-29-fullstack-restructure]]
+
+---
+
+## Convention
+
+- **[Major.Minor.Patch]** — Major: breaking, Minor: feature, Patch: bug
+- **Added** — feature ใหม่
+- **Changed** — เปลี่ยน behavior ของของเดิม
+- **Deprecated** — กำลังจะเลิกใช้
+- **Removed** — เอาออกแล้ว
+- **Fixed** — bug fix
+- **Security** — security patch
