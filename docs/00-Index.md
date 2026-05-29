@@ -19,6 +19,7 @@ tags: [moc, index]
 
 ประวัติการแก้ไข เรียงจากใหม่ → เก่า
 
+- [[work-log/2026-05-29-admin-mode]] — admin mode: เพิ่มสินค้า + บันทึกรับจ่ายรายวัน + autocomplete
 - [[work-log/2026-05-29-frontend-ux-improvements]] — sticky header, dynamic KPI, date range filter, header sort
 - [[work-log/2026-05-29-fullstack-restructure]] — restructure flat → full-stack, .env, Flask API
 - [[work-log/_template]] — template สำหรับ entry ใหม่

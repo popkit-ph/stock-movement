@@ -93,6 +93,68 @@ tr:hover { background: #f9fafb; cursor: pointer; }
 .tx-summary .box.out .val { color: #dc2626; }
 .tx-summary .box.bal { border-color: #3b82f6; }
 .tx-summary .box.bal .val { color: #2563eb; }
+/* ===== Admin ===== */
+header { position: relative; }
+.admin-btn { position: absolute; top: 16px; right: 20px; background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.4); border-radius: 8px; padding: 7px 14px; font-size: 13px; font-family: inherit; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: background 0.15s; }
+.admin-btn:hover { background: rgba(255,255,255,0.28); }
+body.admin-on .admin-btn { background: #fbbf24; color: #78350f; border-color: #f59e0b; font-weight: 600; }
+.admin-bar { display: none; gap: 10px; flex-wrap: wrap; align-items: center; background: #fffbeb; border: 1px solid #fde68a; padding: 12px 16px; border-radius: 12px; margin-bottom: 12px; }
+body.admin-on .admin-bar { display: flex; }
+.admin-bar .ab-label { font-size: 13px; font-weight: 700; color: #92400e; display: flex; align-items: center; gap: 6px; }
+.admin-bar .spacer { flex: 1; }
+.btn { border: none; border-radius: 8px; padding: 9px 16px; font-size: 14px; font-family: inherit; cursor: pointer; font-weight: 600; transition: filter 0.15s; }
+.btn:hover { filter: brightness(0.95); }
+.btn-primary { background: #3b82f6; color: white; }
+.btn-success { background: #10b981; color: white; }
+.btn-ghost { background: white; color: #4b5563; border: 1px solid #d1d5db; }
+.btn-danger-ghost { background: white; color: #dc2626; border: 1px solid #fca5a5; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* admin modal (forms) */
+.amodal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; align-items: center; justify-content: center; padding: 30px 20px; }
+.amodal.show { display: flex; }
+.amodal-card { background: white; border-radius: 14px; width: 100%; max-width: 460px; max-height: calc(100vh - 60px); overflow-y: auto; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
+.amodal-card.wide { max-width: 540px; }
+.amodal-head { padding: 18px 22px 10px; display: flex; justify-content: space-between; align-items: center; }
+.amodal-head h3 { font-size: 17px; color: #111827; }
+.amodal-body { padding: 6px 22px 22px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12px; font-weight: 600; color: #6b7280; margin-bottom: 5px; }
+.field input, .field select, .field textarea { width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; font-family: inherit; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; }
+.form-msg { font-size: 13px; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; display: none; }
+.form-msg.show { display: block; }
+.form-msg.err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.form-msg.ok { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.amodal-foot { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+/* autocomplete */
+.ac-wrap { position: relative; }
+.ac-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #d1d5db; border-top: none; border-radius: 0 0 8px 8px; max-height: 260px; overflow-y: auto; z-index: 10; box-shadow: 0 8px 20px rgba(0,0,0,0.12); display: none; }
+.ac-list.show { display: block; }
+.ac-item { padding: 9px 12px; cursor: pointer; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+.ac-item:last-child { border-bottom: none; }
+.ac-item.active, .ac-item:hover { background: #eff6ff; }
+.ac-item .ac-code { font-family: 'SF Mono', Consolas, monospace; font-weight: 600; color: #1d4ed8; }
+.ac-item .ac-name { color: #374151; }
+.ac-item .ac-bal { float: right; color: #6b7280; font-variant-numeric: tabular-nums; }
+.ac-item mark { background: #fde68a; color: inherit; padding: 0 1px; border-radius: 2px; }
+.ac-empty { padding: 12px; text-align: center; color: #9ca3af; font-size: 13px; }
+.sel-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; display: none; }
+.sel-card.show { display: block; }
+.sel-card .sc-code { font-family: 'SF Mono', Consolas, monospace; font-weight: 700; color: #1d4ed8; font-size: 14px; }
+.sel-card .sc-name { color: #374151; font-size: 14px; margin-top: 2px; }
+.sel-card .sc-bal { font-size: 13px; color: #6b7280; margin-top: 6px; }
+.sel-card .sc-bal b { color: #2563eb; font-size: 16px; }
+.preview-bal { background: #f9fafb; border-radius: 8px; padding: 10px 14px; font-size: 14px; margin-bottom: 14px; color: #374151; }
+.preview-bal b { color: #059669; font-size: 17px; }
+.preview-bal b.neg { color: #dc2626; }
+/* toast */
+#toasts { position: fixed; bottom: 24px; right: 24px; z-index: 300; display: flex; flex-direction: column; gap: 10px; }
+.toast { background: #111827; color: white; padding: 12px 18px; border-radius: 10px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); animation: toastIn 0.2s ease; max-width: 340px; }
+.toast.ok { background: #059669; }
+.toast.err { background: #dc2626; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @media(max-width: 768px) {
   .app { padding: 10px; }
   table { font-size: 12px; }
@@ -108,7 +170,16 @@ tr:hover { background: #f9fafb; cursor: pointer; }
   <header>
     <h1>📦 Stock Movement Dashboard - JLC GROUP 2026</h1>
     <div class="sub">บริษัท เจแอลซี กรุ๊ป จำกัด · รายงานสินค้าและวัสดุคงเหลือ Online Stocks ประจำปี 2026</div>
+    <button class="admin-btn" id="adminBtn" onclick="onAdminBtn()">🔑 <span id="adminBtnText">Admin</span></button>
   </header>
+
+  <div class="admin-bar" id="adminBar">
+    <span class="ab-label">🔧 โหมด Admin</span>
+    <button class="btn btn-success" onclick="openAddProduct()">➕ เพิ่มสินค้าใหม่</button>
+    <button class="btn btn-primary" onclick="openAddMovement()">📝 บันทึกรับ-จ่ายรายวัน</button>
+    <span class="spacer"></span>
+    <button class="btn btn-danger-ghost" onclick="adminLogout()">ออกจาก Admin</button>
+  </div>
 
   <div class="kpis" id="kpis"></div>
 
@@ -192,6 +263,89 @@ tr:hover { background: #f9fafb; cursor: pointer; }
     </div>
   </div>
 </div>
+
+<!-- ===== Admin: Login ===== -->
+<div class="amodal" id="loginModal">
+  <div class="amodal-card" style="max-width:380px">
+    <div class="amodal-head"><h3>🔑 เข้าสู่โหมด Admin</h3><button class="close" onclick="closeAModal('loginModal')">✕</button></div>
+    <div class="amodal-body">
+      <div class="form-msg err" id="loginMsg"></div>
+      <div class="field">
+        <label>กรอก PIN</label>
+        <input type="password" id="loginPin" placeholder="••••" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="amodal-foot">
+        <button class="btn btn-ghost" onclick="closeAModal('loginModal')">ยกเลิก</button>
+        <button class="btn btn-primary" id="loginSubmit" onclick="doLogin()">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Admin: Add Product ===== -->
+<div class="amodal" id="addProductModal">
+  <div class="amodal-card">
+    <div class="amodal-head"><h3>➕ เพิ่มสินค้าใหม่</h3><button class="close" onclick="closeAModal('addProductModal')">✕</button></div>
+    <div class="amodal-body">
+      <div class="form-msg" id="apMsg"></div>
+      <div class="field-row">
+        <div class="field"><label>รหัสสินค้า *</label><input type="text" id="apCode" placeholder="เช่น FG-100"></div>
+        <div class="field"><label>หมวด *</label>
+          <select id="apCategory">
+            <option value="FG">สินค้าสำเร็จรูป (FG)</option>
+            <option value="BTA">Beauterry (BTA)</option>
+            <option value="PM">วัสดุ/ของแถม (PM)</option>
+            <option value="BOX">กล่อง (BOX)</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>ชื่อสินค้า</label><input type="text" id="apName" placeholder="ชื่อสินค้า"></div>
+      <div class="field"><label>ยอดยกมา (คงเหลือเริ่มต้น)</label><input type="number" id="apOpening" value="0" step="any"></div>
+      <div class="amodal-foot">
+        <button class="btn btn-ghost" onclick="closeAModal('addProductModal')">ยกเลิก</button>
+        <button class="btn btn-success" id="apSubmit" onclick="submitAddProduct()">บันทึกสินค้า</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Admin: Add Movement ===== -->
+<div class="amodal" id="addMovementModal">
+  <div class="amodal-card wide">
+    <div class="amodal-head"><h3>📝 บันทึกรับ-จ่ายรายวัน</h3><button class="close" onclick="closeAModal('addMovementModal')">✕</button></div>
+    <div class="amodal-body">
+      <div class="form-msg" id="mvMsg"></div>
+      <div class="field">
+        <label>ค้นหาสินค้า (พิมพ์รหัสหรือชื่อ)</label>
+        <div class="ac-wrap">
+          <input type="text" id="mvSearch" placeholder="🔍 พิมพ์เพื่อค้นหา..." autocomplete="off">
+          <div class="ac-list" id="mvAcList"></div>
+        </div>
+      </div>
+      <div class="sel-card" id="mvSelCard">
+        <div class="sc-code" id="mvSelCode"></div>
+        <div class="sc-name" id="mvSelName"></div>
+        <div class="sc-bal">คงเหลือปัจจุบัน: <b id="mvSelBal">0</b> ชิ้น</div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>วันที่ *</label><input type="date" id="mvDate"></div>
+        <div class="field"><label>เลขที่เอกสาร</label><input type="text" id="mvDoc" placeholder="เช่น PO-001"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>รับเข้า</label><input type="number" id="mvIn" value="0" step="any" min="0" oninput="updatePreview()"></div>
+        <div class="field"><label>จ่ายออก</label><input type="number" id="mvOut" value="0" step="any" min="0" oninput="updatePreview()"></div>
+      </div>
+      <div class="field"><label>หมายเหตุ</label><input type="text" id="mvNote" placeholder="หมายเหตุ (ถ้ามี)"></div>
+      <div class="preview-bal" id="mvPreview" style="display:none"></div>
+      <div class="amodal-foot">
+        <button class="btn btn-ghost" onclick="closeAModal('addMovementModal')">ปิด</button>
+        <button class="btn btn-primary" id="mvSubmit" onclick="submitMovement()" disabled>บันทึกรายการ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
 
 <script>
 let DB = { products: [] };
@@ -470,6 +624,270 @@ function syncStickyHeight() {
 }
 window.addEventListener('resize', syncStickyHeight);
 syncStickyHeight();
+
+// ============================================================
+//  ADMIN MODE
+// ============================================================
+let adminToken = sessionStorage.getItem('adminToken') || '';
+
+function toast(msg, type = '') {
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  box.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.remove(), 300); }, 3000);
+}
+
+async function adminFetch(path, body) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken },
+    body: JSON.stringify(body || {}),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) { exitAdmin(); throw new Error('หมดเวลาเข้าสู่ระบบ กรุณาเข้า Admin ใหม่'); }
+  if (!res.ok) throw new Error(data.detail || ('HTTP ' + res.status));
+  return data;
+}
+
+function updateAdminUI() {
+  const on = !!adminToken;
+  document.body.classList.toggle('admin-on', on);
+  document.getElementById('adminBtnText').textContent = on ? 'Admin: เปิด' : 'Admin';
+}
+
+function onAdminBtn() {
+  if (adminToken) { adminLogout(); return; }
+  document.getElementById('loginPin').value = '';
+  document.getElementById('loginMsg').classList.remove('show');
+  openAModal('loginModal');
+  setTimeout(() => document.getElementById('loginPin').focus(), 50);
+}
+
+async function doLogin() {
+  const pin = document.getElementById('loginPin').value.trim();
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginSubmit');
+  if (!pin) { msg.textContent = 'กรุณากรอก PIN'; msg.classList.add('show'); return; }
+  btn.disabled = true;
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'PIN ไม่ถูกต้อง');
+    adminToken = data.token;
+    sessionStorage.setItem('adminToken', adminToken);
+    updateAdminUI();
+    closeAModal('loginModal');
+    toast('เข้าสู่โหมด Admin แล้ว', 'ok');
+  } catch (e) {
+    msg.textContent = e.message; msg.classList.add('show');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function adminLogout() {
+  try { await fetch('/api/admin/logout', { method: 'POST', headers: { 'Authorization': 'Bearer ' + adminToken } }); } catch (e) {}
+  exitAdmin();
+  toast('ออกจากโหมด Admin แล้ว');
+}
+
+function exitAdmin() {
+  adminToken = '';
+  sessionStorage.removeItem('adminToken');
+  updateAdminUI();
+}
+
+function openAModal(id) { document.getElementById(id).classList.add('show'); }
+function closeAModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// ---- Merge a product object (from API) into DB.products + re-render ----
+function mergeProduct(product) {
+  const idx = DB.products.findIndex(p => p.code === product.code);
+  if (idx >= 0) DB.products[idx] = product;
+  else DB.products.push(product);
+  applyFilters();
+}
+
+// ---- Add Product ----
+function openAddProduct() {
+  document.getElementById('apCode').value = '';
+  document.getElementById('apName').value = '';
+  document.getElementById('apCategory').value = 'FG';
+  document.getElementById('apOpening').value = '0';
+  document.getElementById('apMsg').className = 'form-msg';
+  openAModal('addProductModal');
+  setTimeout(() => document.getElementById('apCode').focus(), 50);
+}
+
+async function submitAddProduct() {
+  const msg = document.getElementById('apMsg');
+  const btn = document.getElementById('apSubmit');
+  const code = document.getElementById('apCode').value.trim();
+  const name = document.getElementById('apName').value.trim();
+  const category = document.getElementById('apCategory').value;
+  const opening_balance = parseFloat(document.getElementById('apOpening').value) || 0;
+  if (!code) { msg.className = 'form-msg err show'; msg.textContent = 'กรุณากรอกรหัสสินค้า'; return; }
+  btn.disabled = true;
+  try {
+    const data = await adminFetch('/api/products', { code, name, category, opening_balance });
+    mergeProduct(data.product);
+    closeAModal('addProductModal');
+    toast('เพิ่มสินค้า ' + code + ' สำเร็จ', 'ok');
+  } catch (e) {
+    msg.className = 'form-msg err show'; msg.textContent = e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ---- Add Movement (with autocomplete) ----
+let mvSelected = null;   // selected product object
+let acIndex = -1;        // active autocomplete index
+
+function openAddMovement() {
+  mvSelected = null; acIndex = -1;
+  document.getElementById('mvSearch').value = '';
+  document.getElementById('mvDoc').value = '';
+  document.getElementById('mvIn').value = '0';
+  document.getElementById('mvOut').value = '0';
+  document.getElementById('mvNote').value = '';
+  document.getElementById('mvDate').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('mvSelCard').classList.remove('show');
+  document.getElementById('mvAcList').classList.remove('show');
+  document.getElementById('mvPreview').style.display = 'none';
+  document.getElementById('mvSubmit').disabled = true;
+  document.getElementById('mvMsg').className = 'form-msg';
+  openAModal('addMovementModal');
+  setTimeout(() => document.getElementById('mvSearch').focus(), 50);
+}
+
+function searchProducts(q) {
+  q = q.trim().toLowerCase();
+  if (!q) return [];
+  const starts = [], contains = [];
+  for (const p of DB.products) {
+    const code = p.code.toLowerCase(), name = (p.name || '').toLowerCase();
+    if (code.startsWith(q) || name.startsWith(q)) starts.push(p);
+    else if (code.includes(q) || name.includes(q)) contains.push(p);
+  }
+  return starts.concat(contains).slice(0, 10);
+}
+
+function hl(text, q) {
+  text = String(text || '');
+  if (!q) return escapeHtml(text);
+  const i = text.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return escapeHtml(text);
+  return escapeHtml(text.slice(0, i)) + '<mark>' + escapeHtml(text.slice(i, i + q.length)) + '</mark>' + escapeHtml(text.slice(i + q.length));
+}
+
+function renderAc(q) {
+  const list = document.getElementById('mvAcList');
+  const matches = searchProducts(q);
+  acIndex = -1;
+  if (!q) { list.classList.remove('show'); return; }
+  if (matches.length === 0) {
+    list.innerHTML = '<div class="ac-empty">ไม่พบสินค้า</div>';
+    list.classList.add('show');
+    return;
+  }
+  list.innerHTML = matches.map((p, i) => `
+    <div class="ac-item" data-i="${i}" onmousedown="event.preventDefault()" onclick="pickProduct(${DB.products.indexOf(p)})">
+      <span class="ac-bal">คงเหลือ ${fmt(p.closing)}</span>
+      <span class="ac-code">${hl(p.code, q)}</span> &nbsp;<span class="ac-name">${hl(p.name, q)}</span>
+    </div>`).join('');
+  list.classList.add('show');
+}
+
+function pickProduct(idx) {
+  mvSelected = DB.products[idx];
+  document.getElementById('mvSearch').value = mvSelected.code + ' · ' + mvSelected.name;
+  document.getElementById('mvAcList').classList.remove('show');
+  document.getElementById('mvSelCode').textContent = mvSelected.code;
+  document.getElementById('mvSelName').textContent = mvSelected.name || '(ไม่มีชื่อ)';
+  document.getElementById('mvSelBal').textContent = fmt(mvSelected.closing);
+  document.getElementById('mvSelCard').classList.add('show');
+  document.getElementById('mvSubmit').disabled = false;
+  updatePreview();
+}
+
+function updatePreview() {
+  const prev = document.getElementById('mvPreview');
+  if (!mvSelected) { prev.style.display = 'none'; return; }
+  const qin = parseFloat(document.getElementById('mvIn').value) || 0;
+  const qout = parseFloat(document.getElementById('mvOut').value) || 0;
+  const newBal = (mvSelected.closing || 0) + qin - qout;
+  prev.style.display = 'block';
+  prev.innerHTML = `คงเหลือใหม่ (โดยประมาณ): <b class="${newBal < 0 ? 'neg' : ''}">${fmt(newBal)}</b> ` +
+    `<span style="color:#9ca3af;font-size:12px">= ${fmt(mvSelected.closing)} + ${fmt(qin)} − ${fmt(qout)}</span>`;
+}
+
+function mvAcKeydown(e) {
+  const list = document.getElementById('mvAcList');
+  const items = list.querySelectorAll('.ac-item');
+  if (!list.classList.contains('show') || items.length === 0) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); acIndex = Math.min(acIndex + 1, items.length - 1); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); acIndex = Math.max(acIndex - 1, 0); }
+  else if (e.key === 'Enter') { if (acIndex >= 0) { e.preventDefault(); items[acIndex].click(); } return; }
+  else return;
+  items.forEach((it, i) => it.classList.toggle('active', i === acIndex));
+  if (items[acIndex]) items[acIndex].scrollIntoView({ block: 'nearest' });
+}
+
+async function submitMovement() {
+  const msg = document.getElementById('mvMsg');
+  const btn = document.getElementById('mvSubmit');
+  if (!mvSelected) { msg.className = 'form-msg err show'; msg.textContent = 'กรุณาเลือกสินค้า'; return; }
+  const date = document.getElementById('mvDate').value;
+  const qty_in = parseFloat(document.getElementById('mvIn').value) || 0;
+  const qty_out = parseFloat(document.getElementById('mvOut').value) || 0;
+  const doc_no = document.getElementById('mvDoc').value.trim();
+  const note = document.getElementById('mvNote').value.trim();
+  if (!date) { msg.className = 'form-msg err show'; msg.textContent = 'กรุณาเลือกวันที่'; return; }
+  if (qty_in === 0 && qty_out === 0) { msg.className = 'form-msg err show'; msg.textContent = 'กรุณากรอกรับเข้าหรือจ่ายออก'; return; }
+  btn.disabled = true;
+  try {
+    const data = await adminFetch('/api/movements', { code: mvSelected.code, date, qty_in, qty_out, doc_no, note });
+    mergeProduct(data.product);
+    mvSelected = data.product;   // keep selection updated with new balance
+    document.getElementById('mvSelBal').textContent = fmt(mvSelected.closing);
+    // reset qty for the next entry, keep product selected
+    document.getElementById('mvIn').value = '0';
+    document.getElementById('mvOut').value = '0';
+    document.getElementById('mvDoc').value = '';
+    document.getElementById('mvNote').value = '';
+    updatePreview();
+    msg.className = 'form-msg ok show';
+    msg.textContent = `บันทึกแล้ว · คงเหลือใหม่ ${fmt(data.product.closing)} ชิ้น`;
+    toast('บันทึกรายการ ' + data.product.code + ' สำเร็จ', 'ok');
+  } catch (e) {
+    msg.className = 'form-msg err show'; msg.textContent = e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('mvSearch').addEventListener('input', (e) => {
+  mvSelected = null;
+  document.getElementById('mvSelCard').classList.remove('show');
+  document.getElementById('mvSubmit').disabled = true;
+  document.getElementById('mvPreview').style.display = 'none';
+  renderAc(e.target.value);
+});
+document.getElementById('mvSearch').addEventListener('keydown', mvAcKeydown);
+document.querySelectorAll('.amodal').forEach(m => {
+  m.addEventListener('click', (e) => { if (e.target === m) m.classList.remove('show'); });
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') document.querySelectorAll('.amodal.show').forEach(m => m.classList.remove('show'));
+});
+
+updateAdminUI();
 </script>
 </body>
 </html>

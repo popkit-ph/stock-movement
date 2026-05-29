@@ -13,3 +13,7 @@ data/raw/*.xlsx
 
 # OS
 .DS_Store
+
+# Claude local state (keep dev launch config only)
+.claude/*
+!.claude/launch.json

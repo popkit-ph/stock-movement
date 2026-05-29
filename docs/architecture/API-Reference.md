@@ -24,7 +24,7 @@ default: `http://127.0.0.1:8000`
 
 **Response 200**
 ```json
-{ "status": "ok", "database": "connected" }
+{ "status": "ok", "database": "connected", "admin_enabled": true }
 ```
 
 **Response 503**
@@ -60,6 +60,44 @@ default: `http://127.0.0.1:8000`
 
 `tx` row = `[date, qty_in, qty_out, balance, doc_no, note]`
 
+## Admin (write) endpoints 🔒
+
+ต้องมี header `Authorization: Bearer <token>` ยกเว้น login. token ได้จาก `/api/admin/login` (เก็บใน memory ของ server — หายเมื่อ restart)
+
+### `POST /api/admin/login`
+แลก PIN เป็น token
+
+**Body** `{ "pin": "2026" }`
+**200** `{ "status": "ok", "token": "<hex>" }` · **401** PIN ผิด · **403** ยังไม่ตั้ง `ADMIN_PIN`
+
+### `POST /api/admin/logout` 🔒
+เพิกถอน token ปัจจุบัน → `{ "status": "ok" }`
+
+### `POST /api/products` 🔒
+สร้างสินค้าใหม่
+
+**Body**
+```json
+{ "code": "FG-100", "name": "...", "category": "FG", "opening_balance": 0 }
+```
+- `category` ต้องเป็น FG / BTA / PM / BOX
+- `sheet_name` ไม่ส่งก็ได้ (default = code)
+- **201** `{ "status": "ok", "product": {...} }`
+- **400** ข้อมูลไม่ครบ · **409** รหัส/sheet ซ้ำ
+
+### `POST /api/movements` 🔒
+บันทึก/อัปเดต รับ-จ่าย รายวัน
+
+**Body**
+```json
+{ "code": "FG-100", "date": "2026-05-29",
+  "qty_in": 50, "qty_out": 0, "doc_no": "PO-1", "note": "" }
+```
+- วันเดียวกัน → **บวกเพิ่ม** ของเดิม (UPSERT) · คนละวัน → แถวใหม่
+- หลังบันทึกจะ **คำนวณ balance + aggregate ใหม่ทั้งสาย** (`recompute_product`)
+- **200** `{ "status": "ok", "product": {...} }` (product ที่อัปเดตแล้ว)
+- **400** qty ติดลบ / 0 ทั้งคู่ / วันที่ผิดรูปแบบ · **404** ไม่พบรหัส
+
 ## SQL ที่ใช้
 
 ```sql
@@ -79,13 +117,18 @@ ORDER BY product_id, movement_date;
 
 ## Helper
 
-`num(x)` — ทำให้ Decimal/None ออกเป็น int (ถ้าเป็นจำนวนเต็ม) หรือ float
+- `num(x)` — ทำให้ Decimal/None ออกเป็น int (ถ้าเป็นจำนวนเต็ม) หรือ float
+- `fetch_product(cur, id)` — ดึง product เดียวในรูปแบบ compact (มี tx)
+- `recompute_product(cur, id)` — คำนวณ running balance ทุกแถว + aggregate ใหม่ (เรียกหลังเขียน movement)
+- `require_admin` (decorator) — ตรวจ `Authorization: Bearer <token>` กับ `ADMIN_TOKENS`
 
 ## Notes
 
 - ไม่มี CORS เพราะ frontend serve จาก Flask เดียวกัน (same origin)
 - ไม่มี pagination — ส่งทั้งหมดในรอบเดียว (~50k tx rows OK สำหรับขนาดนี้)
 - ทุก endpoint เปิด `psycopg2.connect()` + `conn.close()` per request — ไม่มี connection pool
+- admin token เก็บใน memory → restart server แล้วต้อง login ใหม่
+- `ADMIN_PIN` ตั้งใน `.env` (ค่าว่าง = ปิด admin ทั้งหมด)
 
 ## Related
 

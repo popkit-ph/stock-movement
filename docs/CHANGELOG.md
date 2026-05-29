@@ -18,6 +18,24 @@ tags: [changelog]
 
 ---
 
+## [0.3.0] — 2026-05-29
+
+### Added
+- **Admin mode** (PIN-based, `ADMIN_PIN` ใน `.env`)
+  - ปุ่ม 🔑 Admin + login modal → token เก็บใน sessionStorage
+  - **เพิ่มสินค้าใหม่** (รหัส, หมวด, ชื่อ, ยอดยกมา)
+  - **บันทึกรับ-จ่ายรายวัน** พร้อม **search + autocomplete** (ไฮไลต์คำ, โชว์คงเหลือ, keyboard nav) + preview คงเหลือใหม่สดๆ
+  - วันเดียวกันบวกเพิ่ม / คนละวันสร้างแถวใหม่ + คำนวณคงเหลือใหม่อัตโนมัติ
+  - toast แจ้งผลสำเร็จ/ผิดพลาด
+- Backend write API: `POST /api/admin/login`, `/api/admin/logout`, `/api/products`, `/api/movements`
+- helper `recompute_product()` (running balance + aggregate) และ `fetch_product()`
+- `/api/health` เพิ่มฟิลด์ `admin_enabled`
+- `.claude/launch.json` (dev preview config)
+
+ดูรายละเอียดที่ [[work-log/2026-05-29-admin-mode]]
+
+---
+
 ## [0.2.0] — 2026-05-29
 
 ### Added

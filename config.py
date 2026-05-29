@@ -33,3 +33,7 @@ DB_SCHEMA = os.getenv("DB_SCHEMA", "stock_online")
 # ---- Server -------------------------------------------------------------
 SERVER_HOST = os.getenv("SERVER_HOST", "127.0.0.1")
 SERVER_PORT = int(os.getenv("SERVER_PORT", "8000"))
+
+# ---- Admin --------------------------------------------------------------
+# PIN required to enter admin mode (write operations). Empty = admin disabled.
+ADMIN_PIN = os.getenv("ADMIN_PIN", "")
